@@ -1,8 +1,10 @@
 #include <iostream>
+#include <random>
 #include <bits/stdc++.h>
 #include "sphere.h"
 #include "hitablelist.h"
 #include "float.h"
+#include "camera.h"
 
 using namespace std;
 
@@ -23,41 +25,45 @@ vec3 color(const ray &r, hitable *world)
 
 int main()
 {
+    std::random_device seed_gen;
+    std::default_random_engine engine(seed_gen());
+    std::uniform_real_distribution<> dist(0.0, 1.0);
     ofstream out("output.ppm");
     cout.rdbuf(out.rdbuf());
 
     int nx = 200;
     int ny = 100;
+    int ns = 100;
 
     cout << "P3\n"
          << nx << " " << ny << "\n255\n";
 
-    vec3 lowerLeftCorner(-2.0, -1.0, -1.0);
-    vec3 horizontal(4.0, 0.0, 0.0);
-    vec3 vertical(0.0, 2.0, 0.0);
-    vec3 origin(0.0, 0.0, 0.0);
-
-    hitable *list[1];
+    hitable *list[2];
 
     list[0] = new sphere(vec3(0, 0, -1), 0.5);
-
     list[1] = new sphere(vec3(0, -100.5, -1), 100);
-
     hitable *world = new hitableList(list, 2);
+
+    camera cam;
 
     for (int j = ny - 1; j >= 0; j--)
     {
         for (int i = 0; i < nx; i++)
         {
+            vec3 col(0, 0, 0);
+            for (int s = 0; s < ns; s++)
+            {
+                float u = float(i + dist(engine)) / float(nx);
+                float v = float(j + dist(engine)) / float(ny);
 
-            float u = float(i) / float(nx);
-            float v = float(j) / float(ny);
+                ray r = cam.getRay(u, v);
 
-            ray r(origin, lowerLeftCorner + u * horizontal + v * vertical);
+                vec3 p = r.pointAtParameter(2.0);
 
-            vec3 p = r.pointAtParameter(2.0);
+                col += color(r, world);
+            }
 
-            vec3 col = color(r, world);
+            col /= float(ns);
 
             int ir = int(255.99 * col[0]);
             int ig = int(255.99 * col[1]);
