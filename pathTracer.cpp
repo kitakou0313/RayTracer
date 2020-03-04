@@ -11,9 +11,10 @@ using namespace std;
 vec3 color(const ray &r, hitable *world)
 {
     hitRecord rec;
-    if (world->hit(r, 0.0, FLT_MAX, rec))
+    if (world->hit(r, 0.001, FLT_MAX, rec))
     {
-        return 0.5 * vec3(rec.normal.x() + 1, rec.normal.y() + 1, rec.normal.z() + 1);
+        vec3 target = rec.p + rec.normal + randomInUnitsphere();
+        return 0.5 * color(ray(rec.p, target - rec.p), world);
     }
     else
     {
@@ -25,9 +26,7 @@ vec3 color(const ray &r, hitable *world)
 
 int main()
 {
-    std::random_device seed_gen;
-    std::default_random_engine engine(seed_gen());
-    std::uniform_real_distribution<> dist(0.0, 1.0);
+
     ofstream out("output.ppm");
     cout.rdbuf(out.rdbuf());
 
@@ -53,8 +52,8 @@ int main()
             vec3 col(0, 0, 0);
             for (int s = 0; s < ns; s++)
             {
-                float u = float(i + dist(engine)) / float(nx);
-                float v = float(j + dist(engine)) / float(ny);
+                float u = float(i + drand()) / float(nx);
+                float v = float(j + drand()) / float(ny);
 
                 ray r = cam.getRay(u, v);
 
@@ -64,7 +63,7 @@ int main()
             }
 
             col /= float(ns);
-
+            col = vec3(sqrt(col[0]), sqrt(col[1]), sqrt(col[2]));
             int ir = int(255.99 * col[0]);
             int ig = int(255.99 * col[1]);
             int ib = int(255.99 * col[2]);

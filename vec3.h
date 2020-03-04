@@ -1,6 +1,16 @@
 #include <math.h>
+#include <random>
 #include <stdlib.h>
 #include <iostream>
+
+std::random_device seed_gen;
+std::default_random_engine engine(seed_gen());
+std::uniform_real_distribution<> dist(0.0, 1.0);
+
+double drand()
+{
+    return dist(engine);
+}
 
 class vec3
 {
@@ -164,4 +174,14 @@ inline vec3 &vec3::operator/=(const float t)
 inline vec3 unitVector(vec3 v)
 {
     return v / v.length();
+}
+
+vec3 randomInUnitsphere()
+{
+    vec3 p;
+    do
+    {
+        p = 2.0 * vec3(drand(), drand(), drand()) - vec3(1.0, 1.0, 1.0);
+    } while (p.squaredLength() >= 1.0);
+    return p;
 }
