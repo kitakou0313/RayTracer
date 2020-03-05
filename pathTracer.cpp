@@ -8,13 +8,21 @@
 
 using namespace std;
 
-vec3 color(const ray &r, hitable *world)
+vec3 color(const ray &r, hitable *world, int depth)
 {
     hitRecord rec;
     if (world->hit(r, 0.001, FLT_MAX, rec))
     {
-        vec3 target = rec.p + rec.normal + randomInUnitsphere();
-        return 0.5 * color(ray(rec.p, target - rec.p), world);
+        ray scattered;
+        vec3 attenuation;
+        if (depth < 50 && rec.mat_ptr->scatter(r, rec, attenuation, scattered))
+        {
+            return attenuation * color(scattered, world, depth + 1);
+        }
+        else
+        {
+            return vec3(0, 0, 0);
+        }
     }
     else
     {
@@ -37,11 +45,13 @@ int main()
     cout << "P3\n"
          << nx << " " << ny << "\n255\n";
 
-    hitable *list[2];
+    hitable *list[4];
 
-    list[0] = new sphere(vec3(0, 0, -1), 0.5);
-    list[1] = new sphere(vec3(0, -100.5, -1), 100);
-    hitable *world = new hitableList(list, 2);
+    list[0] = new sphere(vec3(0, 0, -1), 0.5, new lambertian(vec3(0.8, 0.3, 0.3)));
+    list[1] = new sphere(vec3(0, -100.5, -1), 100, new lambertian(vec3(0.8, 0.8, 0)));
+    list[2] = new sphere(vec3(1, 0, -1), 0.5, new metal(vec3(0.8, 0.6, 0.2)));
+    list[3] = new sphere(vec3(-1, 0, -1), 0.5, new metal(vec3(0.8, 0.8, 0.8)));
+    hitable *world = new hitableList(list, 4);
 
     camera cam;
 
@@ -59,7 +69,7 @@ int main()
 
                 vec3 p = r.pointAtParameter(2.0);
 
-                col += color(r, world);
+                col += color(r, world, 0);
             }
 
             col /= float(ns);
