@@ -190,3 +190,19 @@ vec3 reflect(const vec3 &v, const vec3 &n)
 {
     return v - 2 * dot(v, n) * n;
 }
+
+bool refract(const vec3 &v, const vec3 &n, float niOverNt, vec3 &refracted)
+{
+    vec3 uv = unitVector(v);
+    float dt = dot(uv, n);
+    float discriminant = 1.0 - niOverNt * niOverNt * (1 - dt * dt);
+    if (discriminant > 0)
+    {
+        refracted = niOverNt * (uv - n * dt) - n * sqrt(discriminant);
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
