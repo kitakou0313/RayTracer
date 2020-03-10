@@ -6,9 +6,10 @@
 class camera
 {
 public:
-    camera(vec3 lookFrom, vec3 lookAt, vec3 vup, float vfov, float aspect)
+    camera(vec3 lookFrom, vec3 lookAt, vec3 vup, float vfov, float aspect, float aperture, float focusDist)
     {
-        vec3 u, v, w;
+        lensRadius = aperture / 2;
+
         float theta = vfov * M_PI / 180;
         float halfHeight = tan(theta / 2);
         float halfWidth = aspect * halfHeight;
@@ -18,20 +19,24 @@ public:
         u = unitVector(cross(vup, w));
         v = cross(w, u);
 
-        lowerLeftCorner = origin - halfWidth * u - halfHeight * v - w;
-        horizontal = 2 * halfWidth * u;
-        vertical = 2 * halfHeight * v;
+        lowerLeftCorner = origin - halfWidth * focusDist * u - halfHeight * focusDist * v - focusDist * w;
+        horizontal = 2 * halfWidth * focusDist * u;
+        vertical = 2 * halfHeight * focusDist * v;
     }
 
-    ray getRay(float u, float v)
+    ray getRay(float s, float t)
     {
-        return ray(origin, lowerLeftCorner + u * horizontal + v * vertical - origin);
+        vec3 rd = lensRadius * randomInUnitDisk();
+        vec3 offset = u * rd.x() + v * rd.y();
+        return ray(origin + offset, lowerLeftCorner + s * horizontal + t * vertical - origin - offset);
     }
 
     vec3 origin;
     vec3 lowerLeftCorner;
     vec3 horizontal;
     vec3 vertical;
+    vec3 u, v, w;
+    float lensRadius;
 };
 
 #endif

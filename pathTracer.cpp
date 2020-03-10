@@ -54,8 +54,12 @@ int main()
 
     hitable *world = new hitableList(list, 5);
 
-    camera cam(vec3(-0.5, 0.5, 0.25), vec3(0, 0, -1), vec3(0, 1, 0), 90, float(nx) / float(ny));
+    vec3 lookFrom = vec3(3, 3, 2);
+    vec3 lookAt = vec3(0, 0, -1);
+    float distToFocus = (lookFrom - lookAt).length();
+    float aperture = 2.0;
 
+    camera cam(lookFrom, lookAt, vec3(0, 1, 0), 20, float(nx) / float(ny), aperture, distToFocus);
     for (int j = ny - 1; j >= 0; j--)
     {
         for (int i = 0; i < nx; i++)
