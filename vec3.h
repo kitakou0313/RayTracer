@@ -2,6 +2,7 @@
 #include <random>
 #include <stdlib.h>
 #include <iostream>
+#include <cstdlib>
 
 std::random_device seed_gen;
 std::default_random_engine engine(seed_gen());
@@ -9,7 +10,7 @@ std::uniform_real_distribution<> dist(0.0, 1.0);
 
 double drand()
 {
-    return dist(engine);
+    return rand() / (RAND_MAX + 1.0);
 }
 
 class vec3
