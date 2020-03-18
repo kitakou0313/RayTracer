@@ -13,6 +13,7 @@ public:
         listSize = n;
     }
     virtual bool hit(const ray &r, float tMin, float tMax, hitRecord &rec) const;
+    virtual bool boundingBox(float t0, float t1, aabb &box) const;
     hitable **list;
     int listSize;
 };

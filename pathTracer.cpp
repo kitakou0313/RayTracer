@@ -5,6 +5,7 @@
 #include "hitablelist.h"
 #include "float.h"
 #include "camera.h"
+#include "bvh.h"
 
 using namespace std;
 
@@ -41,7 +42,8 @@ hitable *randomScene()
     list[i++] = new sphere(vec3(-4, 1, 0), 1.0, new lambertian(vec3(0.4, 0.2, 0.1)));
     list[i++] = new sphere(vec3(4, 1, 0), 1.0, new metal(vec3(0.7, 0.6, 0.5), 0.0));
 
-    return new hitableList(list, i);
+    /*return new hitableList(list, i);*/
+    return new bvhNode(list, i, 0.0, 1.0);
 }
 
 vec3 color(const ray &r, hitable *world, int depth)
@@ -124,6 +126,7 @@ int main()
             int ib = int(255.99 * col[2]);
 
             cout << ir << " " << ig << " " << ib << "\n";
+            printf("%d, %d \n", i, j);
         }
     }
 

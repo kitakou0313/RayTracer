@@ -8,6 +8,7 @@ public:
     sphere() {}
     sphere(vec3 cen, float r, material *m) : center(cen), radius(r), mat_ptr(m){};
     virtual bool hit(const ray &r, float tMin, float tMax, hitRecord &rec) const;
+    virtual bool boundingBox(float t0, float t1, aabb &box) const;
     vec3 center;
     float radius;
     material *mat_ptr;
