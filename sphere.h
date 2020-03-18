@@ -46,4 +46,10 @@ bool sphere::hit(const ray &r, float tMin, float tMax, hitRecord &rec) const
     return false;
 }
 
+bool sphere::boundingBox(float t0, float t1, aabb &box) const
+{
+    box = aabb(center - vec3(radius, radius, radius), center + vec3(radius, radius, radius));
+    return true;
+}
+
 #endif
