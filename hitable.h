@@ -33,7 +33,7 @@ public:
     virtual bool scatter(const ray &r_in, const hitRecord &rec, vec3 &attenuation, ray &scattered) const
     {
         vec3 target = rec.p + rec.normal + randomInUnitsphere();
-        scattered = ray(rec.p, target - rec.p);
+        scattered = ray(rec.p, target - rec.p, r_in.time());
         attenuation = albedo;
         return true;
     }

@@ -6,8 +6,11 @@
 class camera
 {
 public:
-    camera(vec3 lookFrom, vec3 lookAt, vec3 vup, float vfov, float aspect, float aperture, float focusDist)
+    camera(vec3 lookFrom, vec3 lookAt, vec3 vup, float vfov, float aspect, float aperture, float focusDist,
+           float t0, float t1)
     {
+        time0 = t0;
+        time1 = t1;
         lensRadius = aperture / 2;
 
         float theta = vfov * M_PI / 180;
@@ -28,7 +31,9 @@ public:
     {
         vec3 rd = lensRadius * randomInUnitDisk();
         vec3 offset = u * rd.x() + v * rd.y();
-        return ray(origin + offset, lowerLeftCorner + s * horizontal + t * vertical - origin - offset);
+        float time = time0 + drand() * (time1 - time0);
+        return ray(origin + offset, lowerLeftCorner + s * horizontal + t * vertical - origin - offset,
+                   time);
     }
 
     vec3 origin;
@@ -36,6 +41,7 @@ public:
     vec3 horizontal;
     vec3 vertical;
     vec3 u, v, w;
+    float time0, time1;
     float lensRadius;
 };
 

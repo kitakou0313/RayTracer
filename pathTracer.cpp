@@ -7,11 +7,13 @@
 #include "camera.h"
 #include "bvh.h"
 
+#include <chrono>
+
 using namespace std;
 
 hitable *randomScene()
 {
-    int n = 500;
+    int n = 50000;
     hitable **list = new hitable *[n + 1];
     list[0] = new sphere(vec3(0, -1000, 0), 1000, new lambertian(vec3(0.5, 0.5, 0.5)));
     int i = 1;
@@ -25,7 +27,11 @@ hitable *randomScene()
             {
                 if (chooseMat < 0.8)
                 {
-                    list[i++] = new sphere(center, 0.2, new lambertian(vec3(drand() * drand(), drand() * drand(), drand() * drand())));
+                    list[i++] = new movingSphere(
+                        center,
+                        center + vec3(0, 0.5 * drand(), 0),
+                        0.0, 1.0, 0.2,
+                        new lambertian(vec3(drand() * drand(), drand() * drand(), drand() * drand())));
                 }
                 else if (chooseMat < 0.95)
                 {
@@ -42,7 +48,7 @@ hitable *randomScene()
     list[i++] = new sphere(vec3(-4, 1, 0), 1.0, new lambertian(vec3(0.4, 0.2, 0.1)));
     list[i++] = new sphere(vec3(4, 1, 0), 1.0, new metal(vec3(0.7, 0.6, 0.5), 0.0));
 
-    /*return new hitableList(list, i);*/
+    /*return new hitableList(list, i); */
     return new bvhNode(list, i, 0.0, 1.0);
 }
 
@@ -72,12 +78,12 @@ vec3 color(const ray &r, hitable *world, int depth)
 
 int main()
 {
-
+    std::chrono::system_clock::time_point start, end;
     ofstream out("output.ppm");
     cout.rdbuf(out.rdbuf());
 
-    int nx = 1200;
-    int ny = 800;
+    int nx = 600;
+    int ny = 400;
     int ns = 10;
 
     cout << "P3\n"
@@ -100,10 +106,11 @@ int main()
     vec3 lookfrom(13, 2, 3);
     vec3 lookat(0, 0, 0);
     float dist_to_focus = 10.0;
-    float aperture = 0.1;
+    float aperture = 0.0;
 
-    camera cam(lookfrom, lookat, vec3(0, 1, 0), 20, float(nx) / float(ny), aperture, dist_to_focus);
+    camera cam(lookfrom, lookat, vec3(0, 1, 0), 20, float(nx) / float(ny), aperture, dist_to_focus, 0.0, 1.0);
 
+    start = std::chrono::system_clock::now();
     for (int j = ny - 1; j >= 0; j--)
     {
         for (int i = 0; i < nx; i++)
@@ -126,9 +133,13 @@ int main()
             int ib = int(255.99 * col[2]);
 
             cout << ir << " " << ig << " " << ib << "\n";
-            printf("%d, %d \n", i, j);
         }
     }
+    end = std::chrono::system_clock::now();
+
+    double elapsed = std::chrono::duration_cast<std::chrono::seconds>(end - start).count();
+
+    printf("With BVH, %lf sec.\n", elapsed);
 
     return 0;
 }
