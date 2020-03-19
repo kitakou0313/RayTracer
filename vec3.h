@@ -1,3 +1,6 @@
+#ifndef VEC3H
+#define VEC3H
+
 #include <math.h>
 #include <random>
 #include <stdlib.h>
@@ -209,3 +212,5 @@ bool refract(const vec3 &v, const vec3 &n, float niOverNt, vec3 &refracted)
         return false;
     }
 }
+
+#endif

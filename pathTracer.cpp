@@ -59,6 +59,16 @@ hitable *randomScene()
     return new bvhNode(list, i, 0.0, 1.0);
 }
 
+hitable *twoPerlinSphere()
+{
+    texture *pertext = new noiseTexture(4);
+    hitable **list = new hitable *[2];
+
+    list[0] = new sphere(vec3(0, -1000, 0), 1000, new lambertian(pertext));
+    list[1] = new sphere(vec3(0, 2, 0), 2, new lambertian(pertext));
+    return new hitableList(list, 2);
+}
+
 vec3 color(const ray &r, hitable *world, int depth)
 {
     hitRecord rec;
@@ -103,7 +113,9 @@ int main()
     list[3] = new sphere(vec3(-1, 0, -1), 0.5, new dielectric(1.5));
     list[4] = new sphere(vec3(-1, 0, -1), -0.45, new dielectric(1.5));
 */
-    hitable *world = randomScene();
+    /*
+    hitable *world = randomScene();*/
+    hitable *world = twoPerlinSphere();
     /*
     vec3 lookFrom = vec3(11, 0.5, 8);
     vec3 lookAt = vec3(0, 0, -1);
