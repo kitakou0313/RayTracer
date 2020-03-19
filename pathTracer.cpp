@@ -6,6 +6,7 @@
 #include "float.h"
 #include "camera.h"
 #include "bvh.h"
+#include "texture.h"
 
 #include <chrono>
 
@@ -15,7 +16,10 @@ hitable *randomScene()
 {
     int n = 50000;
     hitable **list = new hitable *[n + 1];
-    list[0] = new sphere(vec3(0, -1000, 0), 1000, new lambertian(vec3(0.5, 0.5, 0.5)));
+
+    texture *checker = new checkerTexture(new constantTexture(vec3(0.2, 0.3, 0.1)), new constantTexture(vec3(0.9, 0.9, 0.9)));
+
+    list[0] = new sphere(vec3(0, -1000, 0), 1000, new lambertian(checker));
     int i = 1;
     for (int a = -11; a < 11; a++)
     {
@@ -31,7 +35,9 @@ hitable *randomScene()
                         center,
                         center + vec3(0, 0.5 * drand(), 0),
                         0.0, 1.0, 0.2,
-                        new lambertian(vec3(drand() * drand(), drand() * drand(), drand() * drand())));
+                        new lambertian(
+                            new constantTexture(
+                                vec3(drand() * drand(), drand() * drand(), drand() * drand()))));
                 }
                 else if (chooseMat < 0.95)
                 {
@@ -45,7 +51,7 @@ hitable *randomScene()
         }
     }
     list[i++] = new sphere(vec3(0, 1, 0), 1.0, new dielectric(1.5));
-    list[i++] = new sphere(vec3(-4, 1, 0), 1.0, new lambertian(vec3(0.4, 0.2, 0.1)));
+    list[i++] = new sphere(vec3(-4, 1, 0), 1.0, new lambertian(new constantTexture(vec3(0.4, 0.2, 0.1))));
     list[i++] = new sphere(vec3(4, 1, 0), 1.0, new metal(vec3(0.7, 0.6, 0.5), 0.0));
 
     /*return new hitableList(list, i); */

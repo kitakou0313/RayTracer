@@ -3,6 +3,7 @@
 
 #include "ray.h"
 #include "aabb.h"
+#include "texture.h"
 
 class material;
 struct hitRecord
@@ -29,15 +30,15 @@ public:
 class lambertian : public material
 {
 public:
-    lambertian(const vec3 &a) : albedo(a) {}
+    lambertian(texture *a) : albedo(a) {}
     virtual bool scatter(const ray &r_in, const hitRecord &rec, vec3 &attenuation, ray &scattered) const
     {
         vec3 target = rec.p + rec.normal + randomInUnitsphere();
         scattered = ray(rec.p, target - rec.p, r_in.time());
-        attenuation = albedo;
+        attenuation = albedo->value(0, 0, rec.p);
         return true;
     }
-    vec3 albedo;
+    texture *albedo;
 };
 
 class metal : public material
