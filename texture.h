@@ -12,7 +12,7 @@ class constantTexture : public texture
 public:
     constantTexture() {}
     constantTexture(vec3 c) : color(c) {}
-    virtual vec3 value(float u, float v, vec3 &p) const
+    virtual vec3 value(float u, float v, const vec3 &p) const
     {
         return color;
     }
