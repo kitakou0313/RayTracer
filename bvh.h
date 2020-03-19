@@ -2,6 +2,7 @@
 #define BVHH
 
 #include "hitable.h"
+#include "random.h"
 
 class bvhNode : public hitable
 {

@@ -2,6 +2,7 @@
 #define CAMERAH
 
 #include "ray.h"
+#include "random.h"
 
 class camera
 {

@@ -2,6 +2,7 @@
 #include <random>
 #include <bits/stdc++.h>
 #include "sphere.h"
+#include "random.h"
 #include "hitablelist.h"
 #include "float.h"
 #include "camera.h"

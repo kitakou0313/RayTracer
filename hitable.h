@@ -3,6 +3,7 @@
 
 #include "ray.h"
 #include "aabb.h"
+#include "random.h"
 #include "texture.h"
 
 class material;
